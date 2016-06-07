@@ -1,6 +1,7 @@
 {
 	"ImportPath": "github.com/vulcand/vulcand",
 	"GoVersion": "go1.5",
+	"GodepVersion": "v69",
 	"Packages": [
 		"./..."
 	],
@@ -104,43 +105,43 @@
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/cbreaker",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/connlimit",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/forward",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/memmetrics",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/ratelimit",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/roundrobin",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/stream",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/testutils",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/trace",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/utils",
-			"Rev": "8d49f51577f79f0ffd7607ec9fab42b300002851"
+			"Rev": "6d0c34e42937724bdec6a2786c6c08645640bf33"
 		},
 		{
 			"ImportPath": "github.com/vulcand/predicate",
@@ -187,6 +188,11 @@
 			"ImportPath": "gopkg.in/gemnasium/logrus-airbrake-hook.v2",
 			"Comment": "v2.0.0",
 			"Rev": "31e6fd4bd5a98d8ee7673d24bc54ec73c31810dd"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2/bson",
+			"Comment": "r2015.06.03-5-g22287ba",
+			"Rev": "22287bab4379e1fbf6002fb4eb769888f3fb224c"
 		}
 	]
 }
