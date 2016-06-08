@@ -105,43 +105,43 @@
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/cbreaker",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/connlimit",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/forward",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/memmetrics",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/ratelimit",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/roundrobin",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/stream",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/testutils",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/trace",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/oxy/utils",
-			"Rev": "074693901d99f3edf79925f1ce233c679cfc11fa"
+			"Rev": "e8926a1d2f3602a83db9bd068ac16386a69f25a4"
 		},
 		{
 			"ImportPath": "github.com/vulcand/predicate",
