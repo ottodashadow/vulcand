@@ -35,16 +35,16 @@ func main() {
 	}
 }
 
-func initBundle(c *cli.Context) {
+func initBundle(c *cli.Context) error {
 	b, err := NewBundler(c.StringSlice("middleware"))
 	if err != nil {
-		log.Errorf("Failed to bundle middlewares: %s", err)
-		return
+		return fmt.Errorf("Failed to bundle middlewares: %s", err)
 	}
 	if err := b.bundle(); err != nil {
-		log.Errorf("Failed to bundle middlewares: %s", err)
+		return fmt.Errorf("Failed to bundle middlewares: %s", err)
 	} else {
 		log.Infof("SUCCESS: bundle vulcand and vctl completed")
+		return nil
 	}
 }
 
