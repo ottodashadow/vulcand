@@ -4,6 +4,7 @@ package registry
 import (
 	"github.com/vulcand/vulcand/plugin"
 	"github.com/vulcand/vulcand/plugin/cbreaker"
+	"github.com/vulcand/vulcand/plugin/clientcn"
 	"github.com/vulcand/vulcand/plugin/connlimit"
 	"github.com/vulcand/vulcand/plugin/ratelimit"
 	"github.com/vulcand/vulcand/plugin/rewrite"
@@ -19,6 +20,7 @@ func GetRegistry() *plugin.Registry {
 		rewrite.GetSpec(),
 		cbreaker.GetSpec(),
 		trace.GetSpec(),
+		clientcn.GetSpec(),
 	}
 
 	for _, spec := range specs {
