@@ -2,6 +2,8 @@ package engine
 
 import (
 	"crypto/tls"
+	"crypto/x509"
+	"errors"
 	"fmt"
 )
 
@@ -36,6 +38,9 @@ type TLSSettings struct {
 	// TLS_RSA_WITH_AES_256_CBC_SHA
 	// TLS_RSA_WITH_AES_128_CBC_SHA
 	CipherSuites []string
+
+	ClientAuth string
+	ClientCAs  []byte
 }
 
 // TLSSessionCache sets up parameters for TLS session cache
@@ -55,6 +60,13 @@ func NewTLSConfig(s *TLSSettings) (*tls.Config, error) {
 	// Parse min and max TLS versions
 	var min, max uint16
 	var err error
+	var clientAuth tls.ClientAuthType
+
+	if s.ClientAuth == "" {
+		clientAuth = tls.NoClientCert
+	} else if clientAuth, err = ParseClientAuth(s.ClientAuth); err != nil {
+		return nil, err
+	}
 
 	if s.MinVersion == "" {
 		min = tls.VersionTLS10
@@ -102,6 +114,15 @@ func NewTLSConfig(s *TLSSettings) (*tls.Config, error) {
 		}
 	}
 
+	var clientCAPool *x509.CertPool
+	if s.ClientCAs != nil {
+		clientCAPool = x509.NewCertPool()
+		ok := clientCAPool.AppendCertsFromPEM(s.ClientCAs)
+		if !ok {
+			return nil, errors.New("cannot append client CA pems")
+		}
+	}
+
 	return &tls.Config{
 		MinVersion: min,
 		MaxVersion: max,
@@ -113,6 +134,9 @@ func NewTLSConfig(s *TLSSettings) (*tls.Config, error) {
 		CipherSuites:             css,
 
 		InsecureSkipVerify: s.InsecureSkipVerify,
+
+		ClientAuth: clientAuth,
+		ClientCAs:  clientCAPool,
 	}, nil
 }
 
@@ -180,6 +204,22 @@ func ParseTLSVersion(version string) (uint16, error) {
 		return tls.VersionTLS12, nil
 	}
 	return 0, fmt.Errorf("unsupported TLS version: %v", version)
+}
+
+func ParseClientAuth(auth string) (tls.ClientAuthType, error) {
+	switch auth {
+	case "NoClientCert":
+		return tls.NoClientCert, nil
+	case "RequestClientCert":
+		return tls.RequestClientCert, nil
+	case "RequireAnyClientCert":
+		return tls.RequireAnyClientCert, nil
+	case "VerifyClientCertIfGiven":
+		return tls.VerifyClientCertIfGiven, nil
+	case "RequireAndVerifyClientCert":
+		return tls.RequireAndVerifyClientCert, nil
+	}
+	return 0, fmt.Errorf("unsupported client auth: %v", auth)
 }
 
 const DefaultLRUCapacity = 1024

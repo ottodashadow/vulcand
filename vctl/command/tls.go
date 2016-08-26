@@ -3,6 +3,7 @@ package command
 import (
 	"github.com/codegangsta/cli"
 	"github.com/vulcand/vulcand/engine"
+	"io/ioutil"
 )
 
 func getTLSFlags() []cli.Flag {
@@ -15,6 +16,8 @@ func getTLSFlags() []cli.Flag {
 		cli.StringFlag{Name: "tlsSessionCache", Usage: "session cache type"},
 		cli.IntFlag{Name: "tlsSessionCacheCapacity", Usage: "session cache capacity"},
 		cli.StringSliceFlag{Name: "tlsCS", Usage: "optional list of preferred cipher suites", Value: &cli.StringSlice{}},
+		cli.StringFlag{Name: "tlsClientAuth", Usage: "optional configure client certificate auth"},
+		cli.StringFlag{Name: "tlsClientCAs", Usage: "path to ClientCA pem bundle"},
 	}
 }
 
@@ -26,6 +29,7 @@ func getTLSSettings(c *cli.Context) (*engine.TLSSettings, error) {
 		MinVersion:               c.String("tlsMinV"),
 		MaxVersion:               c.String("tlsMaxV"),
 		CipherSuites:             c.StringSlice("tlsCS"),
+		ClientAuth:               c.String("tlsClientAuth"),
 	}
 	s.SessionCache.Type = c.String("tlsSessionCache")
 	if s.SessionCache.Type == engine.LRUCacheType {
@@ -33,6 +37,15 @@ func getTLSSettings(c *cli.Context) (*engine.TLSSettings, error) {
 			Capacity: c.Int("tlsSessionCacheCapacity"),
 		}
 	}
+	clientCAsPath := c.String("tlsClientCAs")
+	if clientCAsPath != "" {
+		pem, err := ioutil.ReadFile(clientCAsPath)
+		if err != nil {
+			return nil, err
+		}
+		s.ClientCAs = pem
+	}
+
 	if _, err := engine.NewTLSConfig(s); err != nil {
 		return nil, err
 	}
