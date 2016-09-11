@@ -340,6 +340,8 @@ type HTTPBackendSettings struct {
 	KeepAlive HTTPBackendKeepAlive
 	// TLS provides optional TLS settings for HTTP backend
 	TLS *TLSSettings `json:",omitempty"`
+
+	KeyPair *KeyPair
 }
 
 func (s *HTTPBackendSettings) Equals(o HTTPBackendSettings) bool {
@@ -349,7 +351,9 @@ func (s *HTTPBackendSettings) Equals(o HTTPBackendSettings) bool {
 		s.KeepAlive.Period == o.KeepAlive.Period &&
 		s.KeepAlive.MaxIdleConnsPerHost == o.KeepAlive.MaxIdleConnsPerHost &&
 		((s.TLS == nil && o.TLS == nil) ||
-			((s.TLS != nil && o.TLS != nil) && s.TLS.Equals(o.TLS))))
+			((s.TLS != nil && o.TLS != nil) && s.TLS.Equals(o.TLS))) &&
+		((s.KeyPair == nil && o.KeyPair == nil) ||
+			((s.KeyPair != nil && o.KeyPair != nil) && s.KeyPair.Equals(o.KeyPair))))
 }
 
 type MiddlewareKey struct {
@@ -443,6 +447,15 @@ func transportSettings(s HTTPBackendSettings) (*TransportSettings, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		if s.KeyPair != nil {
+			certPair, err := tls.X509KeyPair(s.KeyPair.Cert, s.KeyPair.Key)
+			if err != nil {
+				return nil, err
+			}
+			config.Certificates = []tls.Certificate{certPair}
+		}
+
 		t.TLS = config
 	}
 	return t, nil

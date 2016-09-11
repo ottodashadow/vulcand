@@ -340,18 +340,92 @@ func (n *ng) GetBackends() ([]engine.Backend, error) {
 func (n *ng) GetBackend(key engine.BackendKey) (*engine.Backend, error) {
 	backendKey := n.path("backends", key.Id, "backend")
 
-	bytes, err := n.getVal(backendKey)
+	//1: Decode base Id, Type
+	//2: Verify http
+	//3: Decode raw http settings
+	//4: Unseal key
+	//5: create real httpsettings
+
+	var rb backendRaw
+	err := n.getJSONVal(backendKey, &rb)
 	if err != nil {
 		return nil, err
 	}
-	return engine.BackendFromJSON([]byte(bytes), key.Id)
+
+	if rb.Type != "http" {
+		return nil, fmt.Errorf("Unsupported backend type %v", rb.Type)
+	}
+
+	var rawSettings httpBackendSettings
+
+	if rb.Settings != nil {
+		if err := json.Unmarshal(rb.Settings, &rawSettings); err != nil {
+			return nil, err
+		}
+	}
+
+	if rawSettings.TLS != nil {
+		if _, err := engine.NewTLSConfig(rawSettings.TLS); err != nil {
+			return nil, err
+		}
+	}
+	if len(key.Id) != 0 {
+		rb.Id = key.Id
+	}
+
+	var keyPair *engine.KeyPair
+	if len(rawSettings.KeyPair) != 0 {
+		if err := n.openSealedJSONVal(rawSettings.KeyPair, &keyPair); err != nil {
+			return nil, err
+		}
+	}
+
+	settings := engine.HTTPBackendSettings{
+		Timeouts:rawSettings.Timeouts,
+		KeepAlive:rawSettings.KeepAlive,
+		TLS:rawSettings.TLS,
+		KeyPair:keyPair,
+	}
+
+	b, err := engine.NewHTTPBackend(rb.Id, settings)
+	if err != nil {
+		return nil, err
+	}
+	b.Stats = rb.Stats
+	return b, nil
 }
 
 func (n *ng) UpsertBackend(b engine.Backend) error {
 	if b.Id == "" {
 		return &engine.InvalidFormatError{Message: "backend id can not be empty"}
 	}
-	return n.setJSONVal(n.path("backends", b.Id, "backend"), b, noTTL)
+	backendKey := n.path("backends", b.Id, "backend")
+
+	if b.Type == "http" {
+		bSettings := b.HTTPSettings()
+		val := backendHttp{
+			Id:   b.Id,
+			Type: b.Type,
+			Settings: httpBackendSettings{
+				Timeouts:  bSettings.Timeouts,
+				KeepAlive: bSettings.KeepAlive,
+				TLS:       bSettings.TLS,
+			},
+		}
+
+		if bSettings.KeyPair != nil {
+			bytes, err := n.sealJSONVal(bSettings.KeyPair)
+			if err != nil {
+				return err
+			}
+			val.Settings.KeyPair = bytes
+		}
+
+		return n.setJSONVal(backendKey, val, noTTL)
+	} else {
+		return fmt.Errorf("unsupported backend type %s", b.Type)
+	}
+
 }
 
 func (n *ng) DeleteBackend(bk engine.BackendKey) error {
@@ -867,4 +941,28 @@ type hostSettings struct {
 	Default bool
 	KeyPair []byte
 	OCSP    engine.OCSPSettings
+}
+
+type backendRaw struct {
+	Id       string
+	Type     string
+	Settings json.RawMessage
+	Stats    *engine.RoundTripStats
+}
+
+type backendHttp struct {
+	Id       string
+	Type     string
+	Settings httpBackendSettings
+}
+
+type httpBackendSettings struct {
+	// Timeouts provides timeout settings for backend servers
+	Timeouts engine.HTTPBackendTimeouts
+	// KeepAlive controls keep-alive settings for backend servers
+	KeepAlive engine.HTTPBackendKeepAlive
+	// TLS provides optional TLS settings for HTTP backend
+	TLS *engine.TLSSettings `json:",omitempty"`
+
+	KeyPair []byte
 }

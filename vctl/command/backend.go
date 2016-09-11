@@ -3,6 +3,7 @@ package command
 import (
 	"github.com/codegangsta/cli"
 	"github.com/vulcand/vulcand/engine"
+	"fmt"
 )
 
 func NewBackendCommand(cmd *Command) cli.Command {
@@ -93,6 +94,14 @@ func (cmd *Command) listBackendsAction(c *cli.Context) error {
 func getBackendSettings(c *cli.Context) (engine.HTTPBackendSettings, error) {
 	s := engine.HTTPBackendSettings{}
 
+	if c.String("clientCert") != "" || c.String("clientKey") != "" {
+		keyPair, err := readKeyPair(c.String("clientCert"), c.String("clientKey"))
+		if err != nil {
+			return s, fmt.Errorf("failed to read key pair: %s", err)
+		}
+		s.KeyPair = keyPair
+	}
+
 	s.Timeouts.Read = c.Duration("readTimeout").String()
 	s.Timeouts.Dial = c.Duration("dialTimeout").String()
 	s.Timeouts.TLSHandshake = c.Duration("handshakeTimeout").String()
@@ -114,6 +123,9 @@ func backendOptions() []cli.Flag {
 		cli.DurationFlag{Name: "readTimeout", Usage: "read timeout"},
 		cli.DurationFlag{Name: "dialTimeout", Usage: "dial timeout"},
 		cli.DurationFlag{Name: "handshakeTimeout", Usage: "TLS handshake timeout"},
+
+		cli.StringFlag{Name: "clientKey", Usage: "Path to a client private key"},
+		cli.StringFlag{Name: "clientCert", Usage: "Path to a client certificate"},
 
 		// Keep-alive parameters
 		cli.StringFlag{Name: "keepAlivePeriod", Usage: "keep-alive period"},
